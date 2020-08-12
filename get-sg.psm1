@@ -11,7 +11,7 @@ function Get-SG {
             
             '^(?!sg-)[a-zA-Z]' { $sgfilter = @{name = 'tag:Name'; values = "*" + "$sgdet" + "*" }
                 $SecurityGroupDet = get-ec2securitygroup -filter $sgfilter
-                $properties = [ordered]@{id = $SecurityGroupDet.GroupID
+                $obj =[PSCustomObject]@{id = $SecurityGroupDet.GroupID
                     Description             = $SecurityGroupDet.Description
                     GroupName               = $SecurityGroupDet.GroupName
                     IPIngress               = $SecurityGroupDet.IPPermissions
@@ -20,11 +20,10 @@ function Get-SG {
                     Env                     = $SecurityGroupDet.tag | Where-Object { $_.key -eq 'Environment' } | select-object -ExpandProperty value 
                     VpcId                   = $SecurityGroupDet.vpcid
                 }
-                $obj = New-Object -TypeName psobject -Property $properties 
             }
             '^sg-*' {
                 $SecurityGroupDet = get-ec2securitygroup $sgdet
-                $properties = [ordered]@{id = $SecurityGroupDet.GroupID
+                $obj =[PSCustomObject]@{id = $SecurityGroupDet.GroupID
                     Description             = $SecurityGroupDet.Description
                     GroupName               = $SecurityGroupDet.GroupName
                     IPIngress               = $SecurityGroupDet.IPPermissions
@@ -33,7 +32,6 @@ function Get-SG {
                     Env                     = $SecurityGroupDet.tag | Where-Object { $_.key -eq 'Environment' } | select-object -ExpandProperty value 
                     VpcId                   = $SecurityGroupDet.vpcid
                 }
-                $obj = New-Object -TypeName psobject -Property $properties 
             }
             
         }
